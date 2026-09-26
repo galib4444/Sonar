@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0.0",
+  "source": {
+    "canonical": "YOUR_MASTER_RESUME.pdf",
+    "method": "Hand-transcribed from your master resume. Never regenerate this file by parsing the PDF.",
+    "rule": "Copy this file to master-profile.json (gitignored) and replace every value with your own. Everything below is fictional."
+  },
+
+  "identity": {
+    "name": "Jordan Rivera",
+    "contact": {
+      "email": "jordan.rivera@example.com",
+      "phone": "(555) 010-0199",
+      "location": "Springfield, NY 10001",
+      "linkedin": "linkedin.com/in/jordan-rivera",
+      "github": "github.com/jrivera-dev",
+      "portfolio": "jordanrivera.dev"
+    },
+    "contact_flags": [
+      { "field": "portfolio", "verified": false, "note": "Confirm the site is live before putting it on a resume." }
+    ]
+  },
+
+  "search": {
+    "target_roles": ["Software Engineer", "Implementation Specialist"],
+    "compensation": { "target_range": "$70K-$95K", "minimum": "$65K", "currency": "USD", "location_flexibility": "On-site, hybrid, or remote" },
+    "work_authorization": { "country": "United States", "needs_sponsorship": false, "timezone": "EST" },
+    "notice_period_days": 14
+  },
+
+  "education": [
+    {
+      "id": "edu-1",
+      "school": "Riverside State University",
+      "location": "Springfield, NY",
+      "degree": "B.S. Computer Science",
+      "graduation": "May 2026",
+      "graduation_year": "2026",
+      "honors": ["Dean's List"],
+      "coursework": ["Data Structures", "Database Systems", "Software Engineering"],
+      "verified": true
+    }
+  ],
+
+  "certifications": [
+    { "id": "cert-1", "name": "Example Cloud Practitioner", "issuer": "Example Cloud", "date": "2025", "verified": true },
+    { "id": "cert-2", "name": "Example Data Analytics Certificate", "issuer": "Example Academy", "date": "2026", "verified": false, "verification_note": "Completion date unconfirmed." }
+  ],
+
+  "experience": [
+    {
+      "id": "acme",
+      "company": "Acme Corp",
+      "location": "Springfield, NY",
+      "title": "Software Engineering Intern",
+      "start_date": "Jun 2025",
+      "end_date": "Aug 2025",
+      "include_by_default": true,
+      "verified": true,
+      "bullets": [
+        { "id": "acme-01", "text": "Built an internal dashboard in React and Node.js that replaced a weekly manual spreadsheet export.", "verified": true, "themes": ["engineering", "data"] },
+        { "id": "acme-02", "text": "Wrote integration tests for the billing API, catching two regressions before release.", "verified": true, "themes": ["engineering"] },
+        { "id": "acme-03", "text": "Cut report generation time by 40%.", "verified": false, "verification_note": "Metric not yet confirmed. Keep generic or flag in delivery notes.", "themes": ["data"] }
+      ]
+    },
+    {
+      "id": "cafe",
+      "company": "Blue Lantern Cafe",
+      "location": "Springfield, NY",
+      "title": "Shift Lead (Part-Time)",
+      "start_date": "Jan 2022",
+      "end_date": "May 2025",
+      "include_by_default": false,
+      "verified": false,
+      "verification_note": "Title pending confirmation against a pay stub.",
+      "bullets": [
+        { "id": "cafe-01", "text": "Trained new hires on the POS system and opening procedures.", "verified": true, "themes": ["training", "ops"] }
+      ]
+    }
+  ],
+
+  "projects": [
+    {
+      "id": "job-pipeline",
+      "name": "Job Board Aggregation Pipeline",
+      "codename": "Sonar",
+      "dates": "2026",
+      "include_by_default": true,
+      "verified": true,
+      "technologies": ["Node.js", "YAML", "Google Apps Script", "Telegram Bot API"],
+      "bullets": [
+        { "id": "jp-01", "text": "Built a job scanner that auto-detects each company's applicant tracking system and pulls postings from public APIs.", "verified": true, "themes": ["engineering", "data"], "tags": ["nodejs", "rest-api"] }
+      ]
+    },
+    {
+      "id": "unlaunched",
+      "name": "Unlaunched Side Product",
+      "dates": "2026",
+      "include_by_default": false,
+      "blocked": true,
+      "verified": true,
+      "verification_note": "Stays off resumes until it launches.",
+      "bullets": [
+        { "id": "ul-01", "text": "Built a product that is not public yet.", "verified": true, "themes": ["product"] }
+      ]
+    }
+  ],
+
+  "ai_practice": {},
+
+  "skills": {
+    "programming": ["Python", "JavaScript", "TypeScript", "SQL"],
+    "tools": ["React", "Node.js", "Docker", "Git"]
+  },
+
+  "skill_flags": [],
+
+  "expertise": ["Technical documentation", "Customer onboarding"],
+
+  "known_gaps": [
+    { "gap": "No production Kubernetes experience.", "source": "self" }
+  ],
+
+  "open_items": [
+    { "id": "oi-cafe-title", "item": "Cafe title", "detail": "Verify against a pay stub.", "affects": ["cafe"], "status": "open", "source": "self" },
+    { "id": "oi-unlaunched", "item": "Unlaunched product", "detail": "Stays off resumes until it launches.", "affects": ["unlaunched"], "status": "blocking", "source": "self" }
+  ]
+}

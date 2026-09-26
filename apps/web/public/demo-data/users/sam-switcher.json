@@ -1,0 +1,96 @@
+{
+  "name": "Sam Taylor",
+  "contact": {
+    "email": "sam.taylor@email.com",
+    "phone": "(555) 345-6789",
+    "location": "Seattle, WA",
+    "linkedin": "linkedin.com/in/samtaylor",
+    "portfolio": "samtaylor.io"
+  },
+  "summary": "Marketing professional transitioning to product management with 6 years of experience driving data-driven campaigns and cross-functional collaboration. Completed Product Management bootcamp and launched 2 side projects.",
+  "experience": [
+    {
+      "title": "Senior Marketing Manager",
+      "company": "GrowthLabs",
+      "location": "Seattle, WA",
+      "start_date": "Jan 2021",
+      "end_date": "Present",
+      "bullets": [
+        "Led cross-functional team of 8 (design, engineering, content) to launch 3 product features, increasing user adoption by 35%",
+        "Analyzed user behavior data from 100K+ users to identify product improvement opportunities, resulting in 20% increase in retention",
+        "Managed product roadmap priorities working closely with engineering team on sprint planning",
+        "Conducted 50+ user interviews and usability tests to gather product feedback",
+        "Created detailed PRDs and wireframes for new features using Figma and Jira"
+      ]
+    },
+    {
+      "title": "Marketing Coordinator",
+      "company": "TechVentures Inc",
+      "location": "Seattle, WA",
+      "start_date": "Jun 2018",
+      "end_date": "Dec 2020",
+      "bullets": [
+        "Managed email campaigns reaching 50K+ subscribers with 4.2% CTR (2x industry average)",
+        "Collaborated with product team to define go-to-market strategy for 4 product launches",
+        "Analyzed campaign performance using Google Analytics and Mixpanel, presenting insights to stakeholders",
+        "Increased website conversion rate by 28% through A/B testing and optimization",
+        "Coordinated with engineering team to implement tracking pixels and analytics integrations"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "BudgetBuddy - Personal Finance App",
+      "link": "budgetbuddy.app",
+      "bullets": [
+        "Built MVP mobile app using React Native reaching 500+ downloads in first month",
+        "Conducted user research with 30 beta testers to iterate on feature prioritization",
+        "Managed product roadmap and backlog using Jira, shipping bi-weekly releases",
+        "Integrated Plaid API for bank account connections"
+      ],
+      "technologies": ["React Native", "Product Management", "User Research", "Plaid API"]
+    },
+    {
+      "name": "FitTrack - Workout Logger",
+      "link": "github.com/staylor/fittrack",
+      "bullets": [
+        "Designed and shipped web app with 200+ active users",
+        "Gathered user feedback through surveys and interviews to prioritize features",
+        "Created product metrics dashboard to track engagement and retention"
+      ],
+      "technologies": ["React", "Firebase", "Product Analytics"]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Product Management Certificate",
+      "school": "Product School",
+      "graduation_year": "2023"
+    },
+    {
+      "degree": "Bachelor of Arts in Communications",
+      "school": "University of Washington",
+      "graduation_year": "2018",
+      "gpa": "3.5"
+    }
+  ],
+  "skills": [
+    "Product Management",
+    "User Research",
+    "Data Analysis",
+    "A/B Testing",
+    "Agile/Scrum",
+    "Jira",
+    "Figma",
+    "SQL",
+    "Google Analytics",
+    "Mixpanel",
+    "Product Roadmapping",
+    "Stakeholder Management",
+    "Cross-functional Leadership",
+    "PRD Writing",
+    "React",
+    "JavaScript"
+  ],
+  "baseline_salary": 95000
+}

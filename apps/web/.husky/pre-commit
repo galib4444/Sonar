@@ -1,0 +1,41 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Security check: Prevent committing sensitive files
+echo "🔒 Running security checks..."
+
+# Check for .env files
+if git diff --cached --name-only | grep -qE "\.env|\.env\.local|\.env\..*\.local|credentials\.json|secrets\.json|\.pem$"; then
+  echo "❌ ERROR: Attempting to commit sensitive files!"
+  echo ""
+  echo "The following sensitive files were detected:"
+  git diff --cached --name-only | grep -E "\.env|\.env\.local|\.env\..*\.local|credentials\.json|secrets\.json|\.pem$"
+  echo ""
+  echo "These files should NEVER be committed to git."
+  echo "Please remove them from staging:"
+  echo "  git reset HEAD <file>"
+  echo ""
+  echo "If you need to share configuration, use .env.example or .env.local.template"
+  exit 1
+fi
+
+# Check for potential API keys in staged files
+if git diff --cached | grep -qiE "(GEMINI_API_KEY|OPENROUTER_API_KEY|CLOUDFLARE_API_TOKEN|MONGODB_URI|sk-|API_KEY.*=.*[A-Za-z0-9]{20,})"; then
+  echo "⚠️  WARNING: Potential API key detected in staged changes!"
+  echo ""
+  echo "Please verify you are not committing sensitive data."
+  echo "To see the suspicious content:"
+  echo "  git diff --cached"
+  echo ""
+  read -p "Are you sure you want to continue? (y/N) " -n 1 -r
+  echo
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    exit 1
+  fi
+fi
+
+echo "✅ Security checks passed"
+
+# Run other pre-commit checks (linting, type checking)
+npm run lint
+npm run typecheck

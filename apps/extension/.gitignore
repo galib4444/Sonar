@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+releases/
+*.zip
+*.pkg
+
+# Environment variables
+.env
+.env.local
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Testing
+coverage/
+
+# Temporary files
+*.tmp
+.temp/
+.cache/
+.workday-capture/
+
+# Generated personal profile (contains contact info; rebuilt from
+# packages/profile via export-extension-profile.ts)
+extension-profile.json
+
+# Dev-only smoke-test scripts (run real Ollama/Gemini calls against a real
+# resume for comparison purposes) — not shipped, not a build artifact, kept
+# on disk across sessions rather than written and deleted each time.
+scripts/

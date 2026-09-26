@@ -1,0 +1,10 @@
+{
+  "name": "bekar-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local-only bridge between the Bekar Apply extension and this repo's files. No dependencies.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs"
+  }
+}

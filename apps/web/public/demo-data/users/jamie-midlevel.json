@@ -1,0 +1,90 @@
+{
+  "name": "Jamie Rodriguez",
+  "contact": {
+    "email": "jamie.rodriguez@email.com",
+    "phone": "(555) 234-5678",
+    "location": "Austin, TX",
+    "linkedin": "linkedin.com/in/jamirodriguez",
+    "github": "github.com/jrodriguez",
+    "website": "jamier.tech"
+  },
+  "summary": "Full-stack engineer with 4 years of experience building scalable web applications. Expertise in React, Node.js, and cloud infrastructure with a track record of delivering high-impact features.",
+  "experience": [
+    {
+      "title": "Senior Software Engineer",
+      "company": "DataFlow Systems",
+      "location": "Austin, TX",
+      "start_date": "Mar 2022",
+      "end_date": "Present",
+      "bullets": [
+        "Led development of microservices architecture serving 500K+ daily active users, reducing API latency by 40%",
+        "Architected and implemented real-time data pipeline processing 2M events/day using Node.js and Kafka",
+        "Mentored 3 junior engineers through code reviews and pair programming sessions",
+        "Reduced deployment time by 60% by implementing automated CI/CD pipeline with Docker and Kubernetes",
+        "Collaborated with product team to define technical requirements for 5 major feature launches"
+      ]
+    },
+    {
+      "title": "Software Engineer",
+      "company": "CloudTech Solutions",
+      "location": "Remote",
+      "start_date": "Jun 2020",
+      "end_date": "Feb 2022",
+      "bullets": [
+        "Developed customer-facing dashboard in React and TypeScript used by 10K+ enterprise clients",
+        "Optimized database queries reducing page load time from 3.5s to 800ms",
+        "Implemented OAuth 2.0 authentication system securing 50K+ user accounts",
+        "Built RESTful APIs in Node.js with 99.9% uptime over 18-month period",
+        "Participated in on-call rotation responding to production incidents within 15-minute SLA"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "DevMetrics - Developer Analytics Platform",
+      "link": "github.com/jrodriguez/devmetrics",
+      "bullets": [
+        "Built analytics platform tracking GitHub activity across 1000+ repositories",
+        "Implemented data visualization using D3.js and Chart.js",
+        "Deployed on AWS using Lambda, DynamoDB, and CloudFront for global CDN"
+      ],
+      "technologies": ["React", "TypeScript", "AWS Lambda", "DynamoDB", "D3.js"]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Science in Software Engineering",
+      "school": "University of Texas at Austin",
+      "graduation_year": "2020",
+      "gpa": "3.6"
+    }
+  ],
+  "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Node.js",
+    "Python",
+    "AWS",
+    "Docker",
+    "Kubernetes",
+    "PostgreSQL",
+    "MongoDB",
+    "Redis",
+    "Kafka",
+    "GraphQL",
+    "REST APIs",
+    "Microservices",
+    "CI/CD",
+    "Git",
+    "Agile/Scrum"
+  ],
+  "certifications": [
+    {
+      "name": "AWS Certified Solutions Architect - Associate",
+      "issuer": "Amazon Web Services",
+      "date": "2022"
+    }
+  ],
+  "baseline_salary": 125000
+}

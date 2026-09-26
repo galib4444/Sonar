@@ -1,0 +1,37 @@
+name = "hustler-ai"
+compatibility_date = "2025-10-19"
+main = ".open-next/worker.js"
+assets = { directory = ".open-next/assets", binding = "ASSETS" }
+
+# OpenNext + Cloudflare configuration
+[env.production]
+# Add your production environment bindings here
+# Example: DATABASE = { binding = "DB" }
+
+[env.preview]
+# Add your preview environment bindings here
+
+# Environment variables (non-sensitive)
+# Sensitive vars should be set in Cloudflare Dashboard or GitHub Secrets
+[vars]
+NODE_ENV = "production"
+
+# KV namespaces (uncomment if needed)
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id = "your-kv-namespace-id"
+
+# D1 databases (uncomment if needed)
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "hustler-ai-db"
+# database_id = "your-database-id"
+
+# R2 buckets (uncomment if needed)
+# [[r2_buckets]]
+# binding = "BUCKET"
+# bucket_name = "hustler-ai-assets"
+
+# Workers AI bindings (uncomment if needed)
+# [ai]
+# binding = "AI"

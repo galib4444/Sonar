@@ -1,0 +1,326 @@
+{
+  "users": [
+    {
+      "name": "Alex Chen",
+      "contact": {
+        "email": "alex.chen@email.com",
+        "phone": "(555) 123-4567",
+        "location": "San Francisco, CA",
+        "linkedin": "linkedin.com/in/alexchen",
+        "github": "github.com/alexchen",
+        "portfolio": "alexchen.dev"
+      },
+      "summary": "Recent Computer Science graduate with strong foundation in full-stack development and passion for building user-centric applications.",
+      "experience": [
+        {
+          "title": "Software Engineering Intern",
+          "company": "TechStart Inc",
+          "location": "San Francisco, CA",
+          "start_date": "Jun 2023",
+          "end_date": "Aug 2023",
+          "bullets": [
+            "Developed RESTful API endpoints using Node.js and Express, serving 10K+ daily requests",
+            "Implemented responsive UI components in React, improving mobile user engagement by 25%",
+            "Collaborated with 5-person team using Agile methodology to deliver features on 2-week sprints",
+            "Wrote unit tests achieving 85% code coverage using Jest and React Testing Library"
+          ]
+        },
+        {
+          "title": "Teaching Assistant - Web Development",
+          "company": "University of California",
+          "location": "Berkeley, CA",
+          "start_date": "Jan 2023",
+          "end_date": "May 2023",
+          "bullets": [
+            "Assisted professor in teaching web development course to 120 students",
+            "Conducted weekly office hours helping students debug JavaScript and React code",
+            "Graded assignments and provided detailed feedback on 50+ student projects",
+            "Created supplementary learning materials and coding examples"
+          ]
+        }
+      ],
+      "projects": [
+        {
+          "name": "TaskFlow - Project Management App",
+          "link": "github.com/alexchen/taskflow",
+          "bullets": [
+            "Built full-stack task management application using React, Node.js, and MongoDB",
+            "Implemented real-time collaboration features using Socket.io for 50+ concurrent users",
+            "Deployed to AWS EC2 with automated CI/CD pipeline using GitHub Actions"
+          ],
+          "technologies": [
+            "React",
+            "Node.js",
+            "MongoDB",
+            "Socket.io",
+            "AWS"
+          ]
+        },
+        {
+          "name": "Weather Dashboard",
+          "link": "github.com/alexchen/weather-dashboard",
+          "bullets": [
+            "Created weather visualization dashboard consuming OpenWeather API",
+            "Designed responsive UI with Tailwind CSS supporting mobile and desktop views",
+            "Integrated geolocation API for automatic location detection"
+          ],
+          "technologies": [
+            "React",
+            "TypeScript",
+            "Tailwind CSS",
+            "API Integration"
+          ]
+        }
+      ],
+      "education": [
+        {
+          "degree": "Bachelor of Science in Computer Science",
+          "school": "University of California, Berkeley",
+          "graduation_year": "2023",
+          "gpa": "3.7",
+          "highlights": [
+            "Dean's List (4 semesters)",
+            "CS Honor Society Member"
+          ]
+        }
+      ],
+      "skills": [
+        "JavaScript",
+        "TypeScript",
+        "React",
+        "Node.js",
+        "Python",
+        "HTML/CSS",
+        "Git",
+        "MongoDB",
+        "PostgreSQL",
+        "REST APIs",
+        "Tailwind CSS",
+        "AWS",
+        "Agile"
+      ],
+      "baseline_salary": 85000
+    },
+    {
+      "name": "Jamie Rodriguez",
+      "contact": {
+        "email": "jamie.rodriguez@email.com",
+        "phone": "(555) 234-5678",
+        "location": "Austin, TX",
+        "linkedin": "linkedin.com/in/jamirodriguez",
+        "github": "github.com/jrodriguez",
+        "website": "jamier.tech"
+      },
+      "summary": "Full-stack engineer with 4 years of experience building scalable web applications. Expertise in React, Node.js, and cloud infrastructure with a track record of delivering high-impact features.",
+      "experience": [
+        {
+          "title": "Senior Software Engineer",
+          "company": "DataFlow Systems",
+          "location": "Austin, TX",
+          "start_date": "Mar 2022",
+          "end_date": "Present",
+          "bullets": [
+            "Led development of microservices architecture serving 500K+ daily active users, reducing API latency by 40%",
+            "Architected and implemented real-time data pipeline processing 2M events/day using Node.js and Kafka",
+            "Mentored 3 junior engineers through code reviews and pair programming sessions",
+            "Reduced deployment time by 60% by implementing automated CI/CD pipeline with Docker and Kubernetes",
+            "Collaborated with product team to define technical requirements for 5 major feature launches"
+          ]
+        },
+        {
+          "title": "Software Engineer",
+          "company": "CloudTech Solutions",
+          "location": "Remote",
+          "start_date": "Jun 2020",
+          "end_date": "Feb 2022",
+          "bullets": [
+            "Developed customer-facing dashboard in React and TypeScript used by 10K+ enterprise clients",
+            "Optimized database queries reducing page load time from 3.5s to 800ms",
+            "Implemented OAuth 2.0 authentication system securing 50K+ user accounts",
+            "Built RESTful APIs in Node.js with 99.9% uptime over 18-month period",
+            "Participated in on-call rotation responding to production incidents within 15-minute SLA"
+          ]
+        }
+      ],
+      "projects": [
+        {
+          "name": "DevMetrics - Developer Analytics Platform",
+          "link": "github.com/jrodriguez/devmetrics",
+          "bullets": [
+            "Built analytics platform tracking GitHub activity across 1000+ repositories",
+            "Implemented data visualization using D3.js and Chart.js",
+            "Deployed on AWS using Lambda, DynamoDB, and CloudFront for global CDN"
+          ],
+          "technologies": [
+            "React",
+            "TypeScript",
+            "AWS Lambda",
+            "DynamoDB",
+            "D3.js"
+          ]
+        }
+      ],
+      "education": [
+        {
+          "degree": "Bachelor of Science in Software Engineering",
+          "school": "University of Texas at Austin",
+          "graduation_year": "2020",
+          "gpa": "3.6"
+        }
+      ],
+      "skills": [
+        "JavaScript",
+        "TypeScript",
+        "React",
+        "Node.js",
+        "Python",
+        "AWS",
+        "Docker",
+        "Kubernetes",
+        "PostgreSQL",
+        "MongoDB",
+        "Redis",
+        "Kafka",
+        "GraphQL",
+        "REST APIs",
+        "Microservices",
+        "CI/CD",
+        "Git",
+        "Agile/Scrum"
+      ],
+      "certifications": [
+        {
+          "name": "AWS Certified Solutions Architect - Associate",
+          "issuer": "Amazon Web Services",
+          "date": "2022"
+        }
+      ],
+      "baseline_salary": 125000
+    },
+    {
+      "name": "Sam Taylor",
+      "contact": {
+        "email": "sam.taylor@email.com",
+        "phone": "(555) 345-6789",
+        "location": "Seattle, WA",
+        "linkedin": "linkedin.com/in/samtaylor",
+        "portfolio": "samtaylor.io"
+      },
+      "summary": "Marketing professional transitioning to product management with 6 years of experience driving data-driven campaigns and cross-functional collaboration. Completed Product Management bootcamp and launched 2 side projects.",
+      "experience": [
+        {
+          "title": "Senior Marketing Manager",
+          "company": "GrowthLabs",
+          "location": "Seattle, WA",
+          "start_date": "Jan 2021",
+          "end_date": "Present",
+          "bullets": [
+            "Led cross-functional team of 8 (design, engineering, content) to launch 3 product features, increasing user adoption by 35%",
+            "Analyzed user behavior data from 100K+ users to identify product improvement opportunities, resulting in 20% increase in retention",
+            "Managed product roadmap priorities working closely with engineering team on sprint planning",
+            "Conducted 50+ user interviews and usability tests to gather product feedback",
+            "Created detailed PRDs and wireframes for new features using Figma and Jira"
+          ]
+        },
+        {
+          "title": "Marketing Coordinator",
+          "company": "TechVentures Inc",
+          "location": "Seattle, WA",
+          "start_date": "Jun 2018",
+          "end_date": "Dec 2020",
+          "bullets": [
+            "Managed email campaigns reaching 50K+ subscribers with 4.2% CTR (2x industry average)",
+            "Collaborated with product team to define go-to-market strategy for 4 product launches",
+            "Analyzed campaign performance using Google Analytics and Mixpanel, presenting insights to stakeholders",
+            "Increased website conversion rate by 28% through A/B testing and optimization",
+            "Coordinated with engineering team to implement tracking pixels and analytics integrations"
+          ]
+        }
+      ],
+      "projects": [
+        {
+          "name": "BudgetBuddy - Personal Finance App",
+          "link": "budgetbuddy.app",
+          "bullets": [
+            "Built MVP mobile app using React Native reaching 500+ downloads in first month",
+            "Conducted user research with 30 beta testers to iterate on feature prioritization",
+            "Managed product roadmap and backlog using Jira, shipping bi-weekly releases",
+            "Integrated Plaid API for bank account connections"
+          ],
+          "technologies": [
+            "React Native",
+            "Product Management",
+            "User Research",
+            "Plaid API"
+          ]
+        },
+        {
+          "name": "FitTrack - Workout Logger",
+          "link": "github.com/staylor/fittrack",
+          "bullets": [
+            "Designed and shipped web app with 200+ active users",
+            "Gathered user feedback through surveys and interviews to prioritize features",
+            "Created product metrics dashboard to track engagement and retention"
+          ],
+          "technologies": [
+            "React",
+            "Firebase",
+            "Product Analytics"
+          ]
+        }
+      ],
+      "education": [
+        {
+          "degree": "Product Management Certificate",
+          "school": "Product School",
+          "graduation_year": "2023"
+        },
+        {
+          "degree": "Bachelor of Arts in Communications",
+          "school": "University of Washington",
+          "graduation_year": "2018",
+          "gpa": "3.5"
+        }
+      ],
+      "skills": [
+        "Product Management",
+        "User Research",
+        "Data Analysis",
+        "A/B Testing",
+        "Agile/Scrum",
+        "Jira",
+        "Figma",
+        "SQL",
+        "Google Analytics",
+        "Mixpanel",
+        "Product Roadmapping",
+        "Stakeholder Management",
+        "Cross-functional Leadership",
+        "PRD Writing",
+        "React",
+        "JavaScript"
+      ],
+      "baseline_salary": 95000
+    }
+  ],
+  "jobs": [
+    {
+      "title": "Senior Product Manager",
+      "company": "Airbnb",
+      "location": "Remote",
+      "jd_text": "Airbnb is seeking an experienced Senior Product Manager to lead our Host Experience team.\n\nAbout the role:\nYou'll own the product strategy and roadmap for features that help millions of hosts around the world manage their listings and provide great experiences for guests. This role requires strong analytical skills, user empathy, and the ability to drive consensus across engineering, design, and business stakeholders.\n\nWhat you'll do:\n- Define product vision and strategy for host-facing tools and workflows\n- Lead cross-functional team of 10+ engineers and designers through full product lifecycle\n- Conduct user research and data analysis to identify opportunities and validate solutions\n- Write detailed PRDs and user stories with clear success metrics\n- Manage product roadmap balancing business goals, user needs, and technical constraints\n- Present product updates and recommendations to executive leadership\n- Partner with data science team to analyze A/B test results and user behavior\n- Collaborate with international teams across 15+ countries\n\nRequired qualifications:\n- 5+ years of product management experience, preferably in consumer tech\n- Track record of shipping successful products that drove meaningful business impact\n- Strong analytical skills with experience using SQL, data visualization tools\n- Excellent communication and stakeholder management abilities\n- Experience leading cross-functional teams through ambiguous problems\n- User-centric mindset with experience conducting user research\n- Bachelor's degree in Computer Science, Business, Design, or related field\n\nPreferred qualifications:\n- MBA or advanced degree\n- Experience in marketplace or two-sided platform products\n- Experience with internationalization and localization\n- Technical background or ability to collaborate closely with engineers\n- Experience with Agile/Scrum methodologies\n\nWhat we offer:\n- Competitive compensation ($160K - $220K + equity)\n- Annual Airbnb travel credit\n- Comprehensive health, dental, and vision insurance\n- 401(k) matching\n- Flexible work arrangements\n- Professional development budget\n\nAirbnb is committed to building an inclusive and diverse workplace."
+    },
+    {
+      "title": "Junior Software Engineer",
+      "company": "Shopify",
+      "location": "Toronto, Canada (Remote)",
+      "jd_text": "Join Shopify as a Junior Software Engineer and help us empower entrepreneurs around the world!\n\nAbout Shopify:\nWe're a leading commerce platform powering over 2 million businesses globally. Our mission is to make commerce better for everyone.\n\nThe role:\nAs a Junior Software Engineer, you'll work on our merchant-facing products, building features that help small businesses succeed online. You'll pair with senior engineers, ship code to production, and grow your skills in a supportive environment.\n\nWhat you'll do:\n- Write clean, maintainable code in Ruby on Rails and React\n- Build new features for our merchant dashboard\n- Fix bugs and improve application performance\n- Participate in code reviews and learn from experienced developers\n- Collaborate with designers and product managers\n- Contribute to our engineering culture and documentation\n\nRequired:\n- Bachelor's degree in Computer Science or related field, or equivalent bootcamp experience\n- 0-2 years professional experience (internships count!)\n- Knowledge of at least one programming language (JavaScript, Python, Ruby, Java)\n- Understanding of web development fundamentals (HTML, CSS, JavaScript)\n- Familiarity with Git and version control\n- Strong problem-solving skills and eagerness to learn\n- Good communication and teamwork abilities\n\nNice to have:\n- Experience with React or other JavaScript frameworks\n- Knowledge of Ruby on Rails\n- Understanding of databases and SQL\n- Personal projects or open source contributions\n- Internship experience at a tech company\n\nWhat we offer:\n- Starting salary: $80K - $100K\n- Comprehensive benefits (health, dental, vision)\n- Stock options\n- Learning and development budget ($1,000/year)\n- Remote work setup budget\n- Mentorship program\n- Flexible work hours\n\nShopify celebrates diversity and is committed to creating an inclusive environment for all employees."
+    },
+    {
+      "title": "Software Engineer",
+      "company": "Stripe",
+      "location": "San Francisco, CA",
+      "jd_text": "Stripe is looking for a talented Software Engineer to join our Payments Platform team.\n\nAbout the role:\nYou'll work on building and scaling our core payments infrastructure that processes billions of dollars annually. This is a high-impact role where you'll design APIs, optimize performance, and ensure reliability for millions of businesses worldwide.\n\nResponsibilities:\n- Design and implement scalable backend services using Ruby, Java, or Go\n- Build RESTful and GraphQL APIs consumed by internal and external developers\n- Optimize database queries and caching strategies for high-traffic applications\n- Collaborate with product managers and designers to ship new features\n- Participate in code reviews and contribute to engineering best practices\n- Monitor production systems and respond to incidents as part of on-call rotation\n\nRequired qualifications:\n- 3+ years of professional software engineering experience\n- Strong proficiency in at least one backend language (Ruby, Java, Go, Python)\n- Experience designing and building RESTful APIs\n- Solid understanding of databases (PostgreSQL, MySQL, or MongoDB)\n- Experience with cloud platforms (AWS, GCP, or Azure)\n- Strong CS fundamentals (data structures, algorithms, system design)\n\nPreferred qualifications:\n- Experience with microservices architecture\n- Knowledge of Kubernetes and Docker\n- Experience with payment systems or fintech\n- Contributions to open source projects\n- Familiarity with React or modern frontend frameworks\n\nWhat we offer:\n- Competitive salary ($140K - $200K based on experience)\n- Equity compensation\n- Comprehensive health benefits\n- Flexible PTO\n- Remote work options\n\nStripe is an equal opportunity employer committed to diversity and inclusion."
+    }
+  ]
+}

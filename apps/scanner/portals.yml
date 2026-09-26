@@ -1,0 +1,63 @@
+# Sonar scanner configuration (example)
+#
+# scan.mjs reads this file, pulls open roles from each company's public
+# applicant-tracking-system API (Greenhouse, Ashby, Lever; detected from the
+# URL), applies the filters below, dedupes against data/scan-history.tsv, and
+# appends new matches to data/pipeline.md.
+#
+# Replace everything below with your own targets.
+
+# -- Title filter --
+# A title passes if it contains any `positive` keyword and no `negative` one.
+# Case-insensitive substring match. Keywords of 3 characters or fewer match as
+# whole words (so "AI" does not match "maintenance"). "a + b" requires both.
+title_filter:
+  positive:
+    - "Software Engineer"
+    - "Data Analyst"
+    - "Solutions Engineer"
+    - "Implementation"
+    - "AI + Engineer"
+  negative:
+    - "Senior"
+    - "Staff"
+    - "Principal"
+    - "Director"
+    - "Intern"
+
+# -- Location filter (optional) --
+# Applied after the title filter. Order of checks (case-insensitive substring):
+#   empty location → pass
+#   any block_hard → reject (always_allow cannot override)
+#   any always_allow → pass
+#   any block → reject
+#   allow empty → pass; otherwise must match one allow keyword
+location_filter:
+  block_hard: []
+  always_allow:
+    - "remote"
+  block:
+    - "London"
+    - "Berlin"
+  allow:
+    - "United States"
+    - "USA"
+    - "San Francisco"
+    - "Seattle"
+    - "Austin"
+
+# -- Companies --
+# Each entry needs a careers_url or api pointing at its ATS board.
+#   Greenhouse: https://boards-api.greenhouse.io/v1/boards/<slug>/jobs
+#   Ashby:      https://jobs.ashbyhq.com/<slug>
+#   Lever:      https://jobs.lever.co/<slug>
+# Set `enabled: false` to pause a company without deleting it.
+tracked_companies:
+  - name: Example Greenhouse Co
+    careers_url: https://job-boards.greenhouse.io/example
+    api: https://boards-api.greenhouse.io/v1/boards/example/jobs
+  - name: Example Ashby Co
+    careers_url: https://jobs.ashbyhq.com/example
+  - name: Example Lever Co
+    careers_url: https://jobs.lever.co/example
+    enabled: false

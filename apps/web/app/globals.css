@@ -1,0 +1,641 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Premium Black with Matte ProArt Gold Theme */
+    --background: 0 0% 7%;
+    --foreground: 40 25% 85%;
+    --card: 0 0% 12%;
+    --card-foreground: 40 25% 85%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 40 25% 85%;
+    --primary: 40 35% 65%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 40 30% 60%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 40 15% 55%;
+    --accent: 40 35% 65%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 20%;
+    --input: 0 0% 15%;
+    --ring: 40 35% 65%;
+    --radius: 1rem;
+
+    /* Matte ProArt Champagne Gold Palette */
+    --gold-50: 40 30% 95%;
+    --gold-100: 40 28% 88%;
+    --gold-200: 40 30% 78%;
+    --gold-300: 40 32% 68%;
+    --gold-400: 40 35% 60%;
+    --gold-500: 40 35% 65%;
+    --gold-600: 40 33% 55%;
+    --gold-700: 40 30% 45%;
+    --gold-800: 40 28% 35%;
+    --gold-900: 40 25% 25%;
+
+    /* Cream/Beige for glassmorphism cards */
+    --cream-light: 40 40% 92%;
+    --cream: 40 35% 85%;
+    --cream-dark: 40 30% 78%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background: #000000;
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  /* Premium Glassmorphism Card */
+  .glass-card {
+    @apply backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl;
+  }
+
+  .glass-card-cream {
+    @apply backdrop-blur-md bg-[#E5D4B5]/90 border border-[#D9C5A0]/40 rounded-2xl shadow-xl;
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  }
+
+  /* Matte ProArt Gold Button */
+  .btn-gold {
+    @apply relative overflow-hidden rounded-xl px-8 py-4 font-semibold text-black transition-all duration-300;
+    background: #D4AF67;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .btn-gold:hover {
+    background: #C9A86A;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .btn-gold:active {
+    transform: translateY(0);
+  }
+
+  /* Matte Gold Outline Button */
+  .btn-gold-outline {
+    @apply relative overflow-hidden rounded-xl px-8 py-4 font-semibold transition-all duration-300;
+    background: transparent;
+    border: 2px solid #D4AF67;
+    color: #D4AF67;
+  }
+
+  .btn-gold-outline:hover {
+    background: rgba(212, 175, 103, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Premium Input */
+  .input-premium {
+    @apply w-full px-4 py-3 rounded-xl transition-all duration-300;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #E5D4B5;
+  }
+
+  .input-premium:focus {
+    outline: none;
+    border-color: #D4AF67;
+    box-shadow: 0 0 0 3px rgba(212, 175, 103, 0.15);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .input-premium::placeholder {
+    color: rgba(229, 212, 181, 0.4);
+  }
+
+  /* Matte Gold Accent Text */
+  .text-gold {
+    color: #D4AF67;
+  }
+
+  /* Premium Navigation */
+  .nav-glass {
+    @apply backdrop-blur-xl bg-black/40 border border-white/10 rounded-full;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Matte Gold Subtle Glow */
+  .gold-glow {
+    animation: gold-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes gold-pulse {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(212, 175, 103, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(212, 175, 103, 0.3);
+    }
+  }
+
+  /* Premium Card Hover Effect */
+  .card-hover {
+    @apply transition-all duration-300;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Glowing Beige-Gold Breathing Animation */
+  .animate-glow-pulse {
+    animation: glow-breathing 2s ease-in-out infinite;
+  }
+
+  @keyframes glow-breathing {
+    0%, 100% {
+      box-shadow: 0 0 40px rgba(212, 175, 103, 0.7),
+                  0 0 80px rgba(212, 175, 103, 0.4),
+                  inset 0 0 30px rgba(212, 175, 103, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 50px rgba(212, 175, 103, 0.9),
+                  0 0 100px rgba(212, 175, 103, 0.5),
+                  inset 0 0 40px rgba(212, 175, 103, 0.25);
+    }
+  }
+
+  /* Pixelated MechGodzilla Running Animation */
+  @keyframes mechgodzilla-horizontal-run {
+    0% {
+      left: -80px;
+    }
+    100% {
+      left: calc(100% + 80px);
+    }
+  }
+
+  @keyframes mechgodzilla-bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+
+  @keyframes leg-front {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
+  }
+
+  @keyframes leg-back {
+    0%, 100% {
+      transform: translateY(-3px);
+    }
+    50% {
+      transform: translateY(0);
+    }
+  }
+
+  /* Chrome Dino Game Environment Animations */
+  @keyframes cloud-slow {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100vw);
+    }
+  }
+
+  @keyframes cloud-fast {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100vw);
+    }
+  }
+
+  @keyframes obstacle-move {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100vw);
+    }
+  }
+
+  .animate-cloud-slow {
+    animation: cloud-slow 20s linear infinite;
+  }
+
+  .animate-cloud-fast {
+    animation: cloud-fast 12s linear infinite;
+  }
+
+  .animate-obstacle {
+    animation: obstacle-move 8s linear infinite;
+  }
+
+  .animate-obstacle-slow {
+    animation: obstacle-move 10s linear infinite;
+  }
+
+  /* Globe Loader Animations */
+  @keyframes globe-rotate {
+    0% {
+      transform: rotateY(0deg);
+    }
+    100% {
+      transform: rotateY(360deg);
+    }
+  }
+
+  @keyframes globe-shine {
+    0%, 100% {
+      opacity: 0.3;
+      transform: translateX(0) translateY(0);
+    }
+    50% {
+      opacity: 0.6;
+      transform: translateX(-20px) translateY(10px);
+    }
+  }
+
+  @keyframes orbit-ring {
+    0% {
+      transform: rotateZ(0deg);
+    }
+    100% {
+      transform: rotateZ(360deg);
+    }
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes pulse-text {
+    0%, 100% {
+      opacity: 0.7;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes progress-fill {
+    0% {
+      width: 0%;
+    }
+    100% {
+      width: 100%;
+    }
+  }
+
+  .animate-globe-rotate {
+    animation: globe-rotate 20s linear infinite;
+  }
+
+  .animate-globe-shine {
+    animation: globe-shine 4s ease-in-out infinite;
+  }
+
+  .animate-orbit-ring {
+    animation: orbit-ring 30s linear infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-text {
+    animation: pulse-text 2s ease-in-out infinite;
+  }
+
+  .animate-progress-fill {
+    animation: progress-fill 8s ease-in-out infinite;
+  }
+
+  .globe-shadow {
+    box-shadow:
+      inset 0 0 60px rgba(0, 0, 0, 0.8),
+      inset 20px 0 80px rgba(0, 0, 0, 0.6),
+      inset -20px 0 80px rgba(0, 0, 0, 0.6),
+      0 0 50px rgba(212, 175, 103, 0.2);
+  }
+
+  .bg-gradient-radial {
+    background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
+
+  /* TipTap Editor Styles */
+  .resume-editor .ProseMirror {
+    @apply focus:outline-none;
+  }
+
+  .resume-editor .ProseMirror p {
+    @apply mb-2;
+  }
+
+  .resume-editor .ProseMirror ul,
+  .resume-editor .ProseMirror ol {
+    @apply pl-6 mb-2;
+  }
+
+  .resume-editor .ProseMirror li {
+    @apply mb-1;
+  }
+
+  .resume-editor .ProseMirror strong {
+    @apply font-bold;
+  }
+
+  .resume-editor .ProseMirror em {
+    @apply italic;
+  }
+
+  .resume-editor .ProseMirror u {
+    @apply underline;
+  }
+
+  .resume-editor .ProseMirror h1,
+  .resume-editor .ProseMirror h2,
+  .resume-editor .ProseMirror h3 {
+    @apply font-bold text-gold-400 mb-2;
+  }
+
+  .resume-editor .ProseMirror h1 {
+    @apply text-2xl;
+  }
+
+  .resume-editor .ProseMirror h2 {
+    @apply text-xl;
+  }
+
+  .resume-editor .ProseMirror h3 {
+    @apply text-lg;
+  }
+
+  .resume-editor .ProseMirror.ProseMirror-focused {
+    @apply ring-2 ring-gold-500/50 rounded-lg;
+  }
+
+  /* Placeholder */
+  .resume-editor .ProseMirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    @apply text-gray-500 float-left h-0 pointer-events-none;
+  }
+
+  /* Neon Glow Animations */
+  @keyframes neon-pulse-cyan {
+    0%, 100% {
+      box-shadow:
+        0 0 10px rgba(34, 211, 238, 0.4),
+        0 0 20px rgba(34, 211, 238, 0.3),
+        0 0 30px rgba(34, 211, 238, 0.2),
+        inset 0 0 10px rgba(34, 211, 238, 0.1);
+    }
+    50% {
+      box-shadow:
+        0 0 20px rgba(34, 211, 238, 0.6),
+        0 0 30px rgba(34, 211, 238, 0.5),
+        0 0 40px rgba(34, 211, 238, 0.4),
+        inset 0 0 15px rgba(34, 211, 238, 0.2);
+    }
+  }
+
+  @keyframes neon-pulse-purple {
+    0%, 100% {
+      box-shadow:
+        0 0 10px rgba(192, 132, 252, 0.4),
+        0 0 20px rgba(192, 132, 252, 0.3),
+        0 0 30px rgba(192, 132, 252, 0.2),
+        inset 0 0 10px rgba(192, 132, 252, 0.1);
+    }
+    50% {
+      box-shadow:
+        0 0 20px rgba(192, 132, 252, 0.6),
+        0 0 30px rgba(192, 132, 252, 0.5),
+        0 0 40px rgba(192, 132, 252, 0.4),
+        inset 0 0 15px rgba(192, 132, 252, 0.2);
+    }
+  }
+
+  @keyframes neon-pulse-dim {
+    0%, 100% {
+      box-shadow:
+        0 0 5px rgba(156, 163, 175, 0.2),
+        0 0 10px rgba(156, 163, 175, 0.1),
+        inset 0 0 5px rgba(156, 163, 175, 0.05);
+    }
+    50% {
+      box-shadow:
+        0 0 10px rgba(156, 163, 175, 0.3),
+        0 0 15px rgba(156, 163, 175, 0.2),
+        inset 0 0 8px rgba(156, 163, 175, 0.1);
+    }
+  }
+
+  .neon-glow-cyan {
+    animation: neon-pulse-cyan 2s ease-in-out infinite;
+  }
+
+  .neon-glow-purple {
+    animation: neon-pulse-purple 2s ease-in-out infinite;
+  }
+
+  .neon-glow-dim {
+    animation: neon-pulse-dim 2s ease-in-out infinite;
+  }
+
+  /* Shooting Star Animations - Realistic 3-Phase Motion (Top-Left to Bottom-Right) */
+  @keyframes shooting-star {
+    /* Phase 1: Slow emergence (0-20%) */
+    0% {
+      transform: translateX(0) translateY(0) rotate(135deg) scale(0.7);
+      opacity: 0;
+      filter: brightness(0.6) blur(1px);
+    }
+    10% {
+      transform: translateX(20px) translateY(20px) rotate(135deg) scale(0.8);
+      opacity: 0.4;
+      filter: brightness(0.8) blur(0.5px);
+    }
+    20% {
+      transform: translateX(50px) translateY(50px) rotate(135deg) scale(0.9);
+      opacity: 0.7;
+      filter: brightness(1) blur(0px);
+    }
+
+    /* Phase 2: EXPLOSIVE acceleration & peak intensity (20-70%) */
+    40% {
+      transform: translateX(200px) translateY(200px) rotate(135deg) scale(1.3);
+      opacity: 1;
+      filter: brightness(2) blur(0px) drop-shadow(0 0 40px rgba(255, 255, 255, 1)) drop-shadow(0 0 60px rgba(255, 215, 0, 0.9));
+    }
+    60% {
+      transform: translateX(350px) translateY(350px) rotate(135deg) scale(1.2);
+      opacity: 1;
+      filter: brightness(1.8) blur(0px) drop-shadow(0 0 35px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 50px rgba(255, 215, 0, 0.8));
+    }
+    70% {
+      transform: translateX(450px) translateY(450px) rotate(135deg) scale(1);
+      opacity: 0.9;
+      filter: brightness(1.5) blur(0px) drop-shadow(0 0 25px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 40px rgba(255, 215, 0, 0.6));
+    }
+
+    /* Phase 3: Quick disappearance (70-100%) */
+    85% {
+      transform: translateX(520px) translateY(520px) rotate(135deg) scale(0.6);
+      opacity: 0.4;
+      filter: brightness(1) blur(1px) drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+    }
+    100% {
+      transform: translateX(600px) translateY(600px) rotate(135deg) scale(0.3);
+      opacity: 0;
+      filter: brightness(0.5) blur(2px);
+    }
+  }
+
+  .shooting-star {
+    position: absolute;
+    width: 4px;
+    height: 150px;
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(255, 255, 255, 0.95) 8%,
+      rgba(255, 240, 200, 0.8) 25%,
+      rgba(255, 215, 0, 0.6) 50%,
+      rgba(255, 215, 0, 0.2) 80%,
+      rgba(255, 215, 0, 0) 100%
+    );
+    border-radius: 50%;
+    animation: shooting-star 2.5s cubic-bezier(0.1, 0.3, 0.9, 0.1) infinite;
+  }
+
+  .shooting-star-1 {
+    top: 5%;
+    left: 10%;
+    animation-delay: 0s;
+    animation-duration: 2.5s;
+    height: 150px;
+  }
+
+  .shooting-star-2 {
+    top: 12%;
+    left: 25%;
+    animation-delay: 1.8s;
+    animation-duration: 2.8s;
+    height: 180px;
+    width: 5px;
+  }
+
+  .shooting-star-3 {
+    top: 8%;
+    left: 45%;
+    animation-delay: 3.5s;
+    animation-duration: 2.3s;
+    height: 130px;
+  }
+
+  .shooting-star-4 {
+    top: 15%;
+    left: 5%;
+    animation-delay: 5.2s;
+    animation-duration: 2.6s;
+    height: 160px;
+    width: 5px;
+  }
+
+  .shooting-star-5 {
+    top: 3%;
+    left: 35%;
+    animation-delay: 7s;
+    animation-duration: 2.4s;
+    height: 140px;
+  }
+}
+
+/* Resume Preview - Force Black Text - OUTSIDE OF LAYERS FOR MAX PRIORITY */
+.resume-preview {
+  font-family: Helvetica, Arial, 'Times New Roman', Times, serif !important;
+  font-size: 11pt !important;
+  line-height: 1.3 !important;
+  color: #000000 !important;
+}
+
+.resume-preview * {
+  color: #000000 !important;
+}
+
+.resume-preview h1 {
+  font-size: 16pt !important;
+  font-weight: 900 !important;
+  color: #000000 !important;
+  margin-bottom: 4pt;
+  letter-spacing: 0.5px;
+}
+
+.resume-preview h2 {
+  font-size: 13pt !important;
+  font-weight: 900 !important;
+  color: #000000 !important;
+  margin-bottom: 6pt;
+  padding-bottom: 2pt;
+  border-bottom: 2px solid #000000;
+  letter-spacing: 1px;
+}
+
+.resume-preview h3 {
+  font-size: 11.5pt !important;
+  font-weight: 800 !important;
+  color: #000000 !important;
+  margin-bottom: 2pt;
+}
+
+.resume-preview p,
+.resume-preview li,
+.resume-preview span {
+  color: #000000 !important;
+}
+
+.resume-preview p {
+  margin: 2pt 0;
+}
+
+.resume-preview ul {
+  margin: 4pt 0;
+  padding-left: 20pt;
+}
+
+.resume-preview li {
+  margin-bottom: 3pt;
+}
+
+.experience-item {
+  margin-bottom: 8pt;
+}
+
+.section-spacing {
+  margin-bottom: 12pt;
+}

@@ -1,0 +1,81 @@
+name: Daily Job Scan
+
+on:
+  schedule:
+    - cron: '0 12 * * *'   # 8:00 AM EDT (UTC-4) = 12:00 UTC
+  workflow_dispatch:         # allow manual trigger from GitHub UI
+
+permissions:
+  contents: write            # needed to commit data files back
+
+defaults:
+  run:
+    # The scanner moved from the repo root to apps/scanner when the web app
+    # was merged in. Every step below uses paths relative to the scanner.
+    working-directory: apps/scanner
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: npm install --omit=optional
+
+      - name: Create .env from secrets
+        run: |
+          echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT }}" >> .env
+          echo "TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_ID }}" >> .env
+          echo "SHEETS_WEBHOOK_URL=${{ secrets.SHEETS_WEBHOOK }}" >> .env
+
+      - name: Run zero-token scan
+        id: scan
+        run: |
+          OUTPUT=$(node scan.mjs 2>&1)
+          echo "$OUTPUT"
+          COUNT=$(echo "$OUTPUT" | grep -oE 'New offers added:\s+[0-9]+' | grep -oE '[0-9]+' | head -1)
+          COUNT="${COUNT:-0}"
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+          TOP=$(echo "$OUTPUT" | grep -E '^\s+\+' | head -5 | sed 's/^\s*+\s*/• /')
+          echo "$TOP" > /tmp/top-picks.txt
+
+      - name: Push new jobs to Google Sheets
+        if: steps.scan.outputs.count != '0'
+        run: node push-to-sheets.mjs --since 1
+
+      - name: Send Telegram notification
+        if: steps.scan.outputs.count != '0'
+        run: |
+          COUNT="${{ steps.scan.outputs.count }}"
+          TOP=$(cat /tmp/top-picks.txt)
+          SUFFIX=$([ "$COUNT" != '1' ] && echo 's' || echo '')
+          MSG="🔍 *Daily scan complete* — ${COUNT} new job${SUFFIX} found today."$'\n\n'"*Top picks:*"$'\n'"${TOP}"$'\n\n'"Reply *jobs* to see all pending."
+          node notify.mjs "$MSG"
+
+      - name: Send pipeline digest (manual trigger only)
+        if: github.event_name == 'workflow_dispatch'
+        run: node send-digest.mjs 10
+
+      - name: Commit updated data files
+        run: |
+          git config user.name "sonar bot"
+          git config user.email "actions@github.com"
+          # Add each path on its own so one missing file (e.g. .telegram-offset,
+          # which only the Telegram daemon creates) can't make `git add` abort
+          # atomically and silently stage nothing — the bug that kept every
+          # scheduled run from committing scan-history.tsv back to the repo.
+          for f in data/scan-history.tsv data/scan-runs.tsv data/portal-health.tsv data/pipeline.md data/.telegram-offset; do
+            if [ -e "$f" ]; then git add -f "$f"; fi
+          done
+          git diff --staged --quiet || git commit -m "chore: daily scan $(date +%Y-%m-%d)"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

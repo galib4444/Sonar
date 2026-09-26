@@ -1,0 +1,90 @@
+{
+  "name": "Alex Chen",
+  "contact": {
+    "email": "alex.chen@email.com",
+    "phone": "(555) 123-4567",
+    "location": "San Francisco, CA",
+    "linkedin": "linkedin.com/in/alexchen",
+    "github": "github.com/alexchen",
+    "portfolio": "alexchen.dev"
+  },
+  "summary": "Recent Computer Science graduate with strong foundation in full-stack development and passion for building user-centric applications.",
+  "experience": [
+    {
+      "title": "Software Engineering Intern",
+      "company": "TechStart Inc",
+      "location": "San Francisco, CA",
+      "start_date": "Jun 2023",
+      "end_date": "Aug 2023",
+      "bullets": [
+        "Developed RESTful API endpoints using Node.js and Express, serving 10K+ daily requests",
+        "Implemented responsive UI components in React, improving mobile user engagement by 25%",
+        "Collaborated with 5-person team using Agile methodology to deliver features on 2-week sprints",
+        "Wrote unit tests achieving 85% code coverage using Jest and React Testing Library"
+      ]
+    },
+    {
+      "title": "Teaching Assistant - Web Development",
+      "company": "University of California",
+      "location": "Berkeley, CA",
+      "start_date": "Jan 2023",
+      "end_date": "May 2023",
+      "bullets": [
+        "Assisted professor in teaching web development course to 120 students",
+        "Conducted weekly office hours helping students debug JavaScript and React code",
+        "Graded assignments and provided detailed feedback on 50+ student projects",
+        "Created supplementary learning materials and coding examples"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "TaskFlow - Project Management App",
+      "link": "github.com/alexchen/taskflow",
+      "bullets": [
+        "Built full-stack task management application using React, Node.js, and MongoDB",
+        "Implemented real-time collaboration features using Socket.io for 50+ concurrent users",
+        "Deployed to AWS EC2 with automated CI/CD pipeline using GitHub Actions"
+      ],
+      "technologies": ["React", "Node.js", "MongoDB", "Socket.io", "AWS"]
+    },
+    {
+      "name": "Weather Dashboard",
+      "link": "github.com/alexchen/weather-dashboard",
+      "bullets": [
+        "Created weather visualization dashboard consuming OpenWeather API",
+        "Designed responsive UI with Tailwind CSS supporting mobile and desktop views",
+        "Integrated geolocation API for automatic location detection"
+      ],
+      "technologies": ["React", "TypeScript", "Tailwind CSS", "API Integration"]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "University of California, Berkeley",
+      "graduation_year": "2023",
+      "gpa": "3.7",
+      "highlights": [
+        "Dean's List (4 semesters)",
+        "CS Honor Society Member"
+      ]
+    }
+  ],
+  "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Node.js",
+    "Python",
+    "HTML/CSS",
+    "Git",
+    "MongoDB",
+    "PostgreSQL",
+    "REST APIs",
+    "Tailwind CSS",
+    "AWS",
+    "Agile"
+  ],
+  "baseline_salary": 85000
+}

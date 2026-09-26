@@ -1,0 +1,59 @@
+name: Deploy Web to Cloudflare
+
+# NOTE: the original version of this workflow (from the Hustler_AI checkout)
+# triggered on every push and pull_request to main. That was left over from
+# when the web app owned its own repo. Firing it on this repo's main would
+# deploy on unrelated scanner commits, so it is manual-only until someone
+# deliberately re-arms it. Cloudflare deployment is also still an unconfirmed
+# open item in resume-build-rules.md, so it has never been verified to work.
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: apps/web
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    name: Deploy to Cloudflare Pages
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Process knowledge base
+        run: npm run process-knowledge
+
+      - name: Build Next.js application
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Build OpenNext for Cloudflare
+        run: npm run pages:build
+
+      - name: Deploy to Cloudflare Workers
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Deployment Summary
+        run: |
+          echo "### Deployment Complete! :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Your application has been deployed to Cloudflare Pages" >> $GITHUB_STEP_SUMMARY

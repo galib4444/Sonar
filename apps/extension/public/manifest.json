@@ -1,0 +1,104 @@
+{
+  "manifest_version": 3,
+  "name": "Bekar Apply",
+  "version": "0.9.2",
+  "description": "Personal job application assistant - auto-fill ATS forms from a verified profile, with local Ollama, Gemini, or Claude AI. Fill-only, never auto-submit.",
+
+  "icons": {
+    "16":  "icons/toolbar-16.png",
+    "32":  "icons/toolbar-32.png",
+    "48":  "icons/toolbar-48.png",
+    "128": "icons/toolbar-128.png"
+  },
+
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "activeTab",
+    "tabs",
+    "contextMenus",
+    "scripting",
+    "notifications"
+  ],
+
+  "host_permissions": [
+    "http://localhost:11434/*",
+    "http://127.0.0.1:11434/*",
+    "http://localhost:4100/*",
+    "http://127.0.0.1:4100/*",
+    "*://*.greenhouse.io/*",
+    "*://*.lever.co/*",
+    "*://*.ashbyhq.com/*",
+    "*://*.workday.com/*",
+    "*://*.myworkdayjobs.com/*",
+    "*://*.myworkdaysite.com/*",
+    "*://*.icims.com/*",
+    "*://*.taleo.net/*",
+    "*://*.successfactors.com/*",
+    "*://*.smartrecruiters.com/*",
+    "*://*.jobvite.com/*",
+    "*://*.bamboohr.com/*",
+    "*://*.jazz.co/*",
+    "*://*.jazzhr.com/*",
+    "*://*.workable.com/*",
+    "*://*.breezy.hr/*",
+    "*://*.rippling.com/*",
+    "*://*.recruitee.com/*",
+    "*://*.teamtailor.com/*",
+    "*://*.paylocity.com/*",
+    "*://*.applytojob.com/*",
+    "*://*.oraclecloud.com/*",
+    "*://*.dayforce.com/*",
+    "*://*.paycom.com/*",
+    "*://*.paycomonline.net/*",
+    "*://*.adp.com/*",
+    "*://*.gusto.com/*",
+    "*://*.deel.com/*"
+  ],
+
+  "optional_host_permissions": [
+    "https://generativelanguage.googleapis.com/*",
+    "https://api.anthropic.com/*",
+    "https://script.google.com/*",
+    "https://script.googleusercontent.com/*"
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Bekar Apply",
+    "default_icon": {
+      "16":  "icons/toolbar-16.png",
+      "32":  "icons/toolbar-32.png",
+      "48":  "icons/toolbar-48.png",
+      "128": "icons/toolbar-128.png"
+    }
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/monogram.png",
+        "icons/monogram-nosquare.png",
+        "icons/monogram-icon.png",
+        "icons/monogram-transparent.png",
+        "icons/toolbar-16.png",
+        "icons/toolbar-32.png",
+        "icons/toolbar-48.png",
+        "icons/toolbar-96.png",
+        "icons/toolbar-128.png",
+        "icons/primary-logo.png",
+        "icons/cube-48.png",
+        "icons/header-icon-24.png"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; img-src 'self' data: blob:; connect-src 'self' http://127.0.0.1:11434 http://localhost:11434 http://127.0.0.1:4100 http://localhost:4100 https://generativelanguage.googleapis.com https://api.anthropic.com https://script.google.com https://script.googleusercontent.com; style-src 'self' 'unsafe-inline'; font-src 'self'"
+  }
+}

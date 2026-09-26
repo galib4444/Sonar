@@ -1,0 +1,12 @@
+# Git attributes for security
+
+# Prevent .env files from ever being committed (extra safety layer)
+.env* filter=secret
+.env*.local filter=secret
+
+# Mark sensitive files as binary to prevent diffs
+.env* binary
+.env*.local binary
+*.pem binary
+**/credentials.json binary
+**/secrets.json binary

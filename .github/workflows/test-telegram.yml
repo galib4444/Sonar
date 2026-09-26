@@ -1,0 +1,32 @@
+name: Test Telegram
+
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    # Scanner lives at apps/scanner since the web app was merged in.
+    working-directory: apps/scanner
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Create .env
+        run: |
+          echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT }}" >> .env
+          echo "TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_ID }}" >> .env
+
+      - name: Check secrets are loaded
+        run: |
+          [ -n "${{ secrets.TELEGRAM_BOT }}" ] && echo "BOT_TOKEN: set" || echo "BOT_TOKEN: MISSING"
+          [ -n "${{ secrets.TELEGRAM_ID }}" ] && echo "CHAT_ID: set" || echo "CHAT_ID: MISSING"
+
+      - name: Send test message
+        run: node notify.mjs "GitHub Actions Telegram test"

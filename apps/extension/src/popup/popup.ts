@@ -1,0 +1,729 @@
+/**
+ * Popup UI logic — simplified single-page interface
+ */
+
+import browser from '../shared/browser-compat';
+import type { PopupState } from '../shared/types';
+import { getSettings, setSettings, getTodayApplications, generateSummaryMessage } from '../shared/storage';
+import { log, error, initGlobalErrorCapture } from '../shared/log';
+initGlobalErrorCapture();
+import {
+  getUserProfile,
+  checkProfileCompleteness,
+  listProfiles,
+  getActiveProfileId,
+  setActiveProfile,
+  migrateToMultiProfile,
+} from '../shared/profile';
+import { setHTML } from '../shared/html';
+import { FORM_FIELD_SELECTOR } from '../shared/dom';
+import { isATSDomain } from '../shared/ats-domains';
+import { fetchPendingSheetJobs } from '../shared/sheets-jobs';
+import { stripApplicationFormNoise } from '../shared/job-description-scraper';
+
+let currentState: PopupState = {
+  enabled: true,
+  dryRun: false,
+  nativeHostConnected: false,
+  lastError: null,
+  lastJob: null,
+};
+
+// ── UI Updates ─────────────────────────────────────────────────────────────
+
+function updateUI(): void {
+  // Enabled toggle (in header)
+  const enabledToggle = document.getElementById('toggle-enabled');
+  if (enabledToggle) enabledToggle.classList.toggle('active', currentState.enabled);
+
+  // Dry run toggle
+  const dryrunToggle = document.getElementById('dryrun-toggle');
+  if (dryrunToggle) dryrunToggle.classList.toggle('active', currentState.dryRun);
+
+  // Ollama status
+  const ollamaStatusEl = document.getElementById('ollama-status');
+  if (ollamaStatusEl) {
+    if (currentState.nativeHostConnected) {
+      ollamaStatusEl.textContent = 'Connected';
+      ollamaStatusEl.className = 'ollama-status connected';
+    } else {
+      ollamaStatusEl.textContent = 'Disconnected';
+      ollamaStatusEl.className = 'ollama-status disconnected';
+    }
+  }
+
+  // Make ollama-bar clickable only when disconnected → opens AI Setup onboarding
+  const ollamaBar = document.getElementById('ollama-bar');
+  if (ollamaBar) {
+    if (currentState.nativeHostConnected) {
+      ollamaBar.classList.remove('clickable');
+      ollamaBar.title = '';
+      ollamaBar.onclick = null;
+    } else {
+      ollamaBar.classList.add('clickable');
+      ollamaBar.title = 'Click to set up AI';
+      ollamaBar.onclick = () => {
+        browser.tabs.create({ url: browser.runtime.getURL('onboarding/onboarding.html') });
+        window.close();
+      };
+    }
+  }
+
+  // Job info
+  const jobInfoEl = document.getElementById('job-info');
+  if (jobInfoEl) {
+    if (currentState.lastJob) {
+      const title = currentState.lastJob.title || 'Unknown Title';
+      const company = currentState.lastJob.hostname || '';
+      setHTML(jobInfoEl, `
+        <div class="job-card-detected">
+          <div class="job-dot"></div>
+          <div>
+            <div class="job-title">Job Page Detected</div>
+            <div class="job-detail">${escapeHtml(title)} &middot; ${escapeHtml(company)}</div>
+          </div>
+        </div>
+      `);
+    } else {
+      setHTML(jobInfoEl, '<div class="job-empty">No job detected yet</div>');
+    }
+  }
+}
+
+function updateStats(total: number, interviewing: number): void {
+  const totalEl = document.getElementById('stat-total');
+  const interviewingEl = document.getElementById('stat-interviewing');
+  if (totalEl) totalEl.textContent = String(total);
+  if (interviewingEl) interviewingEl.textContent = String(interviewing);
+}
+
+// ── Helpers ─────────────────────────────────────────────────────────────────
+
+function escapeHtml(text: string): string {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+async function requestState(): Promise<void> {
+  try {
+    const response = await browser.runtime.sendMessage({ kind: 'GET_STATE' }) as any;
+    if (response && response.kind === 'STATE_UPDATE') {
+      currentState = {
+        ...currentState,
+        enabled: response.enabled ?? currentState.enabled,
+        dryRun: response.dryRun ?? currentState.dryRun,
+        nativeHostConnected: response.nativeHostConnected ?? currentState.nativeHostConnected,
+        lastError: response.lastError ?? currentState.lastError,
+        lastJob: response.lastJob ?? currentState.lastJob,
+      };
+      updateUI();
+      // Stats come from background (reliable storage access)
+      updateStats(response.statTotal ?? 0, response.statInterviewing ?? 0);
+    }
+  } catch (err) {
+    error('Failed to request state:', err);
+  }
+}
+
+async function checkBadgeNotification(): Promise<void> {
+  try {
+    const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+    const tabId = tabs[0]?.id;
+    if (!tabId) return;
+
+    const badgeText = await chrome.action.getBadgeText({ tabId });
+    const bannerEl = document.getElementById('badge-notification');
+    if (!bannerEl) return;
+
+    if (badgeText === '!') {
+      const tabUrl = tabs[0]?.url || '';
+      let hostname = '';
+      try { hostname = new URL(tabUrl).hostname; } catch {}
+
+      const textEl = document.getElementById('badge-notification-text');
+      if (textEl) {
+        textEl.innerHTML = `<strong>Job page detected</strong><small>${hostname ? hostname + ' — ' : ''}Click "Grant" to enable autofill on this site</small>`;
+      }
+      bannerEl.style.display = 'flex';
+
+      document.getElementById('badge-grant-btn')?.addEventListener('click', async () => {
+        const btn = document.getElementById('badge-grant-btn') as HTMLButtonElement | null;
+        try {
+          const origin = new URL(tabUrl).origin + '/*';
+          const granted = await chrome.permissions.request({ origins: [origin] });
+          if (granted) {
+            await chrome.action.setBadgeText({ text: '', tabId });
+            bannerEl.style.display = 'none';
+            chrome.tabs.reload(tabId);
+            window.close();
+          } else if (btn) {
+            btn.textContent = 'Denied';
+            setTimeout(() => { btn.textContent = 'Grant'; }, 2000);
+          }
+        } catch (e) {
+          error('Permission request failed:', e);
+          if (btn) {
+            btn.textContent = 'Error';
+            setTimeout(() => { btn.textContent = 'Grant'; }, 2000);
+          }
+        }
+      });
+
+      document.getElementById('badge-dismiss-btn')?.addEventListener('click', async () => {
+        await chrome.action.setBadgeText({ text: '', tabId });
+        bannerEl.style.display = 'none';
+      });
+    } else {
+      bannerEl.style.display = 'none';
+    }
+  } catch { /* non-critical */ }
+}
+
+/**
+ * Fire-and-forget: called from init() without awaiting, so a slow/cold Apps
+ * Script deployment can never stall popup startup. 3s budget — a nudge that
+ * shows up a beat late is fine, a popup that hangs is not.
+ */
+async function checkScheduledJobs(): Promise<void> {
+  try {
+    const { jobs } = await fetchPendingSheetJobs(3000);
+    const banner = document.getElementById('new-jobs-banner');
+    const countEl = document.getElementById('new-jobs-count');
+    if (!banner || !countEl) return;
+
+    if (jobs.length > 0) {
+      countEl.textContent = `${jobs.length} job${jobs.length > 1 ? 's' : ''}`;
+      banner.style.display = 'flex';
+    } else {
+      banner.style.display = 'none';
+    }
+  } catch { /* non-critical */ }
+}
+
+interface AutofillTriggerResult {
+  ok: boolean;
+  message: string;
+}
+
+/**
+ * Injects content.js (via activeTab — works on any site, not just the
+ * pre-approved ATS list, no host_permissions expansion needed) and dispatches
+ * the trigger event, but only after confirming there's something on the page
+ * worth filling. Every failure path returns a message instead of throwing
+ * silently, so the button can never again "do nothing" with no explanation.
+ */
+async function dispatchCustomEventOnActiveTab(eventName: string): Promise<AutofillTriggerResult> {
+  const ensureResp = (await browser.runtime.sendMessage({ kind: 'ENSURE_CONTENT_SCRIPT' })) as
+    | { injected?: boolean; error?: string }
+    | undefined;
+  if (!ensureResp?.injected) {
+    return {
+      ok: false,
+      message: ensureResp?.error
+        ? `Couldn't access this page: ${ensureResp.error}`
+        : "Couldn't access this page — try reloading the tab and clicking again.",
+    };
+  }
+
+  const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+  const tab = tabs[0];
+  if (!tab?.id) {
+    return { ok: false, message: 'No active tab found.' };
+  }
+
+  try {
+    const [injection] = await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: (name: string, selector: string) => {
+        const count = document.querySelectorAll(selector).length;
+        if (count > 0) window.dispatchEvent(new CustomEvent(name));
+        return count;
+      },
+      args: [eventName, FORM_FIELD_SELECTOR],
+    });
+
+    const fieldCount = typeof injection?.result === 'number' ? injection.result : 0;
+    if (fieldCount === 0) {
+      return { ok: false, message: 'No fillable fields found on this page.' };
+    }
+
+    let message = `Found ${fieldCount} field${fieldCount === 1 ? '' : 's'} — filling now.`;
+    try {
+      const hostname = tab.url ? new URL(tab.url).hostname : '';
+      if (hostname && !isATSDomain(hostname)) {
+        message += " This isn't a recognized job platform — double-check values before submitting.";
+      }
+    } catch {
+      /* unparseable tab URL — skip the advisory, not worth failing over */
+    }
+
+    return { ok: true, message };
+  } catch (err) {
+    return {
+      ok: false,
+      message: err instanceof Error ? `Could not run on this page: ${err.message}` : 'Could not run on this page.',
+    };
+  }
+}
+
+// ── Init ────────────────────────────────────────────────────────────────────
+
+function setActionButtonsDisabled(disabled: boolean): void {
+  const autofillBtn = document.getElementById('manual-autofill-btn') as HTMLButtonElement | null;
+  const coverBtn = document.getElementById('cover-letter-btn') as HTMLButtonElement | null;
+  [autofillBtn, coverBtn].forEach(btn => {
+    if (!btn) return;
+    btn.disabled = disabled;
+    btn.classList.toggle('btn-no-profile', disabled);
+  });
+}
+
+async function checkProfileStatus(): Promise<void> {
+  try {
+    const profile = await getUserProfile();
+    const warningEl = document.getElementById('profile-warning');
+    if (!warningEl) return;
+
+    if (!profile) {
+      const activeId = await getActiveProfileId();
+      const profiles = await listProfiles();
+      const activeMeta = profiles.find(p => p.id === activeId);
+
+      if (activeMeta) {
+        warningEl.style.display = 'block';
+        setHTML(warningEl, `<strong>${escapeHtml(activeMeta.name)} needs setup.</strong> <a href="#" id="profile-warning-link" style="color:#ea580c;text-decoration:underline;">Set up profile</a> to enable auto-fill.`);
+        warningEl.querySelector('#profile-warning-link')?.addEventListener('click', (e) => {
+          e.preventDefault();
+          browser.tabs.create({ url: browser.runtime.getURL(`onboarding/onboarding.html?profileId=${encodeURIComponent(activeMeta.id)}`) });
+          window.close();
+        });
+      } else {
+        warningEl.style.display = 'block';
+        setHTML(warningEl, '<strong>No profile found.</strong> <a href="#" id="profile-warning-link" style="color:#ea580c;text-decoration:underline;">Set up your profile</a> to enable auto-fill.');
+        warningEl.querySelector('#profile-warning-link')?.addEventListener('click', (e) => {
+          e.preventDefault();
+          browser.tabs.create({ url: browser.runtime.getURL('onboarding/onboarding.html') });
+          window.close();
+        });
+      }
+      setActionButtonsDisabled(true);
+      return;
+    }
+
+    const completeness = checkProfileCompleteness(profile);
+    log(`Profile completeness: ${completeness.completionPercentage}% (missing: ${completeness.missingFields.join(', ') || 'none'})`);
+
+    if (completeness.completionPercentage < 70) {
+      const missing = completeness.missingFields.slice(0, 4).join(', ');
+      const moreCount = completeness.missingFields.length - 4;
+      const moreText = moreCount > 0 ? ` +${moreCount} more` : '';
+      warningEl.style.display = 'block';
+      setHTML(warningEl, `<strong>Profile ${completeness.completionPercentage}% complete.</strong> Missing: ${missing}${moreText}. <a href="#" id="profile-warning-link" style="color:#ea580c;text-decoration:underline;">Complete profile</a>`);
+      warningEl.querySelector('#profile-warning-link')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        browser.tabs.create({ url: browser.runtime.getURL('onboarding/onboarding.html') });
+        window.close();
+      });
+      setActionButtonsDisabled(false);
+    } else {
+      warningEl.style.display = 'none';
+      setActionButtonsDisabled(false);
+    }
+  } catch (err) {
+    error('Failed to check profile status:', err);
+  }
+}
+
+async function renderProfileSwitcher(): Promise<void> {
+  await migrateToMultiProfile();
+  const profiles = await listProfiles();
+  const activeId = await getActiveProfileId();
+  const active = profiles.find(p => p.id === activeId) ?? profiles[0];
+
+  const dotEl = document.getElementById('profile-dot');
+  const nameEl = document.getElementById('profile-name-display');
+  const roleEl = document.getElementById('profile-role-display');
+  const dropdownEl = document.getElementById('profile-dropdown');
+  const switcherEl = document.getElementById('profile-switcher');
+
+  if (!dotEl || !nameEl || !dropdownEl || !switcherEl) return;
+
+  switcherEl.style.display = '';
+
+  if (active) {
+    dotEl.style.background = active.color;
+    nameEl.textContent = active.name;
+    if (roleEl) roleEl.textContent = active.targetRole ?? '';
+  }
+
+  if (profiles.length <= 1 && !active?.targetRole) {
+    // Hide switcher when there's only one profile with no role
+    switcherEl.style.display = 'none';
+    return;
+  }
+
+  let dropdownHtml = '';
+  for (const p of profiles) {
+    const isActive = p.id === activeId;
+    dropdownHtml += `
+      <div class="profile-dropdown-item ${isActive ? 'active' : ''}" data-switch-profile="${escapeHtml(p.id)}">
+        <div class="profile-dot" style="background:${p.color}"></div>
+        <span class="pdi-name">${escapeHtml(p.name)}</span>
+        ${p.targetRole ? `<span class="pdi-role">${escapeHtml(p.targetRole)}</span>` : ''}
+      </div>
+    `;
+  }
+  dropdownHtml += `<div class="profile-dropdown-manage" id="popup-manage-profiles">Manage Profiles</div>`;
+  setHTML(dropdownEl, dropdownHtml);
+
+  switcherEl.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dropdownEl.classList.toggle('open');
+  });
+
+  document.addEventListener('click', () => {
+    dropdownEl.classList.remove('open');
+  });
+
+  dropdownEl.querySelectorAll('[data-switch-profile]').forEach(item => {
+    item.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const id = (item as HTMLElement).dataset.switchProfile!;
+      if (id === activeId) { dropdownEl.classList.remove('open'); return; }
+      await setActiveProfile(id);
+      await browser.runtime.sendMessage({ kind: 'SWITCH_PROFILE', profileId: id }).catch(() => {});
+      dropdownEl.classList.remove('open');
+      await renderProfileSwitcher();
+      await checkProfileStatus();
+    });
+  });
+
+  document.getElementById('popup-manage-profiles')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    browser.tabs.create({ url: browser.runtime.getURL('profiles/profiles.html') });
+    window.close();
+  });
+}
+
+async function init(): Promise<void> {
+  // ── Tab switching ──
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = (btn as HTMLElement).dataset.tab;
+      if (!target) return;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(target)?.classList.add('active');
+    });
+  });
+
+  const settings = await getSettings();
+  currentState.enabled = settings.enabled;
+  currentState.dryRun = settings.dryRun;
+  requestState();
+  checkProfileStatus();
+  renderProfileSwitcher();
+
+  // ── Manage Profile → profiles page ──
+  document.getElementById('profile-btn')?.addEventListener('click', () => {
+    browser.tabs.create({ url: browser.runtime.getURL('profiles/profiles.html') });
+    window.close();
+  });
+
+  document.getElementById('btn-jobs')?.addEventListener('click', () => {
+    browser.tabs.create({ url: browser.runtime.getURL('jobs/jobs.html') });
+    window.close();
+  });
+
+  // ── Tailor Resume — scrape JD from active tab, store it, then open tailor page ──
+  document.getElementById('tailor-resume-btn')?.addEventListener('click', async () => {
+    try {
+      const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+      const tab = tabs[0];
+      if (tab?.id) {
+        // Self-contained by necessity (see background.ts's SCRAPE_JOB_DESCRIPTION
+        // handler for the fuller explanation) — kept in sync with that
+        // handler's and job-description-scraper.ts's confidence tiers by
+        // hand: JSON-LD and ATS-specific selectors are 'high', a generic
+        // landmark or document.body is 'low' (the tier that can capture an
+        // application form along with the posting).
+        const [injection] = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            try {
+              const scripts = document.querySelectorAll('script[type="application/ld+json"]');
+              for (const script of scripts) {
+                const data = JSON.parse(script.textContent || '');
+                const items = Array.isArray(data) ? data : [data];
+                for (const item of items) {
+                  if (item['@type'] === 'JobPosting' && typeof item.description === 'string') {
+                    const d = new DOMParser().parseFromString(item.description, 'text/html');
+                    const t = d.body.textContent?.trim() ?? '';
+                    if (t.length > 100) return { text: t, confidence: 'high' as const };
+                  }
+                }
+              }
+            } catch { /* ignore parse errors, fall through */ }
+
+            const preciseSelectors = [
+              '.jobs-description__content', '.jobs-description-content',
+              '#job-details', '[data-automation-id="jobPostingDescription"]',
+              '[class*="job-description"]', '[class*="jobDescription"]',
+              '[data-qa="job-description"]', '.posting-page .section-wrapper',
+            ];
+            for (const sel of preciseSelectors) {
+              const el = document.querySelector(sel);
+              const t = el?.textContent?.trim() ?? '';
+              if (t.length > 100) return { text: t, confidence: 'high' as const };
+            }
+
+            const genericSelectors = ['article', '[role="main"]', 'main'];
+            for (const sel of genericSelectors) {
+              const el = document.querySelector(sel);
+              const t = el?.textContent?.trim() ?? '';
+              if (t.length > 100) return { text: t, confidence: 'low' as const };
+            }
+            return { text: document.body.innerText.substring(0, 6000), confidence: 'low' as const };
+          },
+        });
+        const result = injection?.result as { text: string; confidence: 'high' | 'low' } | undefined;
+        const rawJdText = result?.text ?? '';
+        const confidence = result?.confidence ?? 'low';
+        // A backstop regardless of confidence — see
+        // stripApplicationFormNoise's doc comment (job-description-scraper.ts).
+        const jdText = stripApplicationFormNoise(rawJdText);
+        await browser.storage.local.set({
+          pending_tailor_jd: jdText,
+          pending_tailor_title: currentState.lastJob?.title || '',
+          pending_tailor_company: currentState.lastJob?.hostname || '',
+          pending_tailor_url: tab.url || '',
+          pending_tailor_source_tab: tab.id,
+          pending_tailor_confidence: confidence,
+        });
+      }
+    } catch (err) { error('Failed to scrape JD for tailor:', err); }
+    browser.tabs.create({ url: browser.runtime.getURL('resume-tailor/resume-tailor.html') });
+    window.close();
+  });
+
+  // ── View Dashboard ──
+  document.getElementById('view-dashboard-btn')?.addEventListener('click', () => {
+    browser.tabs.create({ url: browser.runtime.getURL('dashboard/dashboard.html') });
+    window.close();
+  });
+
+  // ── Chat with Resume ──
+  document.getElementById('chat-resume-btn')?.addEventListener('click', () => {
+    browser.tabs.create({ url: browser.runtime.getURL('chat/chat.html') });
+    window.close();
+  });
+
+  // ── Data Explorer ──
+  document.getElementById('data-explorer-btn')?.addEventListener('click', () => {
+    browser.tabs.create({ url: browser.runtime.getURL('data/data.html') });
+    window.close();
+  });
+
+
+  // ── Footer links ──
+  document.getElementById('home-btn')?.addEventListener('click', () => {
+    browser.tabs.create({ url: browser.runtime.getURL('home/home.html') });
+    window.close();
+  });
+  document.getElementById('settings-btn')?.addEventListener('click', () => {
+    browser.tabs.create({ url: browser.runtime.getURL('settings/settings.html') });
+    window.close();
+  });
+  document.getElementById('help-btn')?.addEventListener('click', () => {
+    browser.tabs.create({ url: browser.runtime.getURL('help/help.html') });
+    window.close();
+  });
+  document.getElementById('privacy-btn')?.addEventListener('click', () => {
+    browser.tabs.create({ url: browser.runtime.getURL('privacy/privacy.html') });
+    window.close();
+  });
+
+  // ── Auto-Fill ──
+  document.getElementById('manual-autofill-btn')?.addEventListener('click', async () => {
+    const btn = document.getElementById('manual-autofill-btn') as HTMLButtonElement | null;
+    const resultEl = document.getElementById('autofill-result');
+    if (btn) btn.disabled = true;
+    if (resultEl) {
+      resultEl.hidden = false;
+      resultEl.textContent = 'Checking this page…';
+      resultEl.className = 'autofill-result';
+    }
+    try {
+      const result = await dispatchCustomEventOnActiveTab('bekar-manual-autofill');
+      if (resultEl) {
+        resultEl.textContent = result.message;
+        resultEl.className = `autofill-result ${result.ok ? 'ok' : 'fail'}`;
+      }
+      if (result.ok) setTimeout(() => window.close(), 900);
+    } catch (err) {
+      error('Autofill trigger failed:', err);
+      if (resultEl) {
+        resultEl.textContent = 'Something went wrong. Check the extension for errors.';
+        resultEl.className = 'autofill-result fail';
+      }
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  });
+
+  // ── Cover Letter ──
+  document.getElementById('cover-letter-btn')?.addEventListener('click', async () => {
+    try {
+      await dispatchCustomEventOnActiveTab('bekar-generate-cover-letter');
+      window.close();
+    } catch (err) { error('Cover letter trigger failed:', err); }
+  });
+
+
+  // ── Enabled toggle ──
+  document.getElementById('toggle-enabled')?.addEventListener('click', async () => {
+    currentState.enabled = !currentState.enabled;
+    await setSettings({ enabled: currentState.enabled });
+    updateUI();
+  });
+
+  // ── Dry Run toggle ──
+  document.getElementById('dryrun-toggle')?.addEventListener('click', async () => {
+    currentState.dryRun = !currentState.dryRun;
+    await setSettings({ dryRun: currentState.dryRun });
+    updateUI();
+  });
+
+  // ── Advanced panel toggle ──
+  const advToggle = document.getElementById('advanced-toggle');
+  const advPanel = document.getElementById('advanced-panel');
+  if (advToggle && advPanel) {
+    advToggle.addEventListener('click', () => {
+      const isOpen = advPanel.classList.toggle('open');
+      advToggle.classList.toggle('open', isOpen);
+    });
+  }
+
+  // ── View Learned Values ──
+  document.getElementById('view-learned-btn')?.addEventListener('click', async () => {
+    try {
+      await browser.storage.local.set({ showLearnedValues: true });
+      browser.tabs.create({ url: browser.runtime.getURL('onboarding/onboarding.html') });
+      window.close();
+    } catch (err) { error('Failed to open learned values:', err); }
+  });
+
+  // ── Clean Self-ID Data ──
+  document.getElementById('clean-selfid-btn')?.addEventListener('click', async () => {
+    try {
+      if (!confirm('Reset Self-ID data (Gender, Race, Disability, Veteran Status) to defaults?\n\nYour personal info and work history will not be affected.')) return;
+
+      const profile = await getUserProfile();
+      if (!profile) { alert('No profile found. Set up your profile first.'); return; }
+
+      profile.selfId = {
+        gender: [], race: [], orientation: [],
+        veteran: 'Decline to self-identify',
+        transgender: 'Decline to self-identify',
+        disability: 'Decline to self-identify',
+      };
+      const { saveUserProfile } = await import('../shared/profile');
+      await saveUserProfile(profile);
+
+      const btn = document.getElementById('clean-selfid-btn') as HTMLButtonElement;
+      if (btn) { btn.textContent = 'Done!'; setTimeout(() => { btn.textContent = 'Clean Self-ID Data'; }, 1500); }
+    } catch (err) { error('Failed to clean Self-ID:', err); }
+  });
+
+  // ── Debug Profile ──
+  document.getElementById('debug-profile-btn')?.addEventListener('click', async () => {
+    try {
+      const profile = await getUserProfile();
+      if (!profile) { alert('No profile found.'); return; }
+
+      const text = JSON.stringify(profile, null, 2);
+      await navigator.clipboard.writeText(text);
+      console.log('Profile data:', profile);
+
+      const btn = document.getElementById('debug-profile-btn') as HTMLButtonElement;
+      if (btn) { btn.textContent = 'Copied to clipboard!'; setTimeout(() => { btn.textContent = 'Debug Profile Data'; }, 1500); }
+    } catch (err) { error('Failed to debug profile:', err); }
+  });
+
+  // ── Copy Summary ──
+  document.getElementById('copy-summary-btn')?.addEventListener('click', async () => {
+    try {
+      const summary = await getTodayApplications();
+      const message = generateSummaryMessage(summary);
+      await navigator.clipboard.writeText(message);
+
+      const btn = document.getElementById('copy-summary-btn') as HTMLButtonElement;
+      if (btn) { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy Daily Summary'; }, 1500); }
+    } catch (err) { error('Failed to copy summary:', err); }
+  });
+
+  // ── State updates from background ──
+  browser.runtime.onMessage.addListener((message: unknown) => {
+    if (typeof message === 'object' && message !== null && 'kind' in message) {
+      if (message.kind === 'STATE_UPDATE') {
+        const update = message as Partial<PopupState> & { kind: string };
+        currentState = {
+          ...currentState,
+          enabled: update.enabled ?? currentState.enabled,
+          dryRun: update.dryRun ?? currentState.dryRun,
+          nativeHostConnected: update.nativeHostConnected ?? currentState.nativeHostConnected,
+          lastError: update.lastError ?? currentState.lastError,
+          lastJob: update.lastJob ?? currentState.lastJob,
+        };
+        updateUI();
+        const upd = update as any;
+        updateStats(upd.statTotal ?? 0, upd.statInterviewing ?? 0);
+      }
+    }
+  });
+
+  // Initial render
+  updateUI();
+  // Stats are loaded via requestState() → background reads storage
+  requestState();
+
+  // Poll every 3s — background will return fresh stats each time
+  setInterval(() => requestState(), 3000);
+
+  // ── Badge notification banner (permission issues) ──
+  await checkBadgeNotification();
+
+  // ── New jobs notification banner ── (not awaited: a slow webhook must never stall popup init)
+  void checkScheduledJobs();
+
+  const banner = document.getElementById('new-jobs-banner');
+  banner?.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).id === 'new-jobs-dismiss') return;
+    browser.tabs.create({ url: browser.runtime.getURL('jobs/jobs.html') });
+    window.close();
+  });
+  document.getElementById('new-jobs-dismiss')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (banner) banner.style.display = 'none';
+  });
+
+  log('Popup initialized');
+
+  // Feature tour — show on first launch after onboarding
+  setTimeout(() => {
+    if (typeof (window as any).bekarTour !== 'undefined') {
+      const tour = (window as any).bekarTour;
+      if (tour.isPending() || !tour.isDone('popup-intro')) {
+        tour.start('popup-intro', [
+          { selector: '#manual-autofill-btn', title: 'Auto-Fill Applications', body: 'One click fills the entire job application from your profile.' },
+          { selector: '[data-tab="tab-tools"]', title: 'AI Tools', body: 'Cover letters, resume tailoring, job search, and chat -- all powered by local AI.' },
+          { selector: '[data-tab="tab-profile"]', title: 'Your Profile', body: 'Switch profiles, manage your data, and access settings.' },
+        ]);
+      }
+    }
+  }, 800);
+}
+
+init();
