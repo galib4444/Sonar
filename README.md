@@ -8,6 +8,12 @@ This is a sanitized snapshot of a private working repo. The code is complete;
 all personal data (profile, resumes, application history, scan results) has
 been removed and replaced with fictional examples or empty templates.
 
+## Watch the tour
+
+[![Sonar in 84 seconds](docs/media/sonar-poster.jpg)](docs/media/sonar-explained.mp4)
+
+84 seconds, from the morning scan to the filled form. Click the image to play it.
+
 ## The parts
 
 ```
@@ -22,6 +28,86 @@ There is no root `package.json`. Dependencies are installed per app:
 `npm install` inside whichever app you're working on. `CLAUDE.md` has the full
 technical brief (architecture, known issues, exact commands), written for an
 AI coding agent working in this repo.
+
+## Architecture
+
+```mermaid
+flowchart TD
+
+subgraph group_discovery["Job discovery"]
+  node_scanner["Job scanner<br/>[scan.mjs]"]
+  node_scanledger[("Scan ledger")]
+end
+
+subgraph group_profile["Profile source"]
+  node_master["Verified master profile<br/>[master-profile.ts]"]
+  node_profileexport["Extension profile export"]
+end
+
+subgraph group_web["Resume web app"]
+  node_webui["Resume editor and tracker<br/>[page.tsx]"]
+  node_webapi["Tailor and resume APIs<br/>[route.ts]"]
+  node_webstore[("Resume and application storage<br/>[index.ts]")]
+  node_analytics["Application analytics<br/>[route.ts]"]
+end
+
+subgraph group_extension["Apply extension"]
+  node_atsform["ATS form detection and fill<br/>[content.ts]"]
+  node_profiledata[("Stored extension profile<br/>[profile.ts]")]
+  node_autofill["Field classification and autofill"]
+  node_graphservice["Graph memory service<br/>[service.ts]"]
+  node_graphstorage[("Graph memory storage<br/>[storage.ts]")]
+  node_extensionai["Local AI and resume tools<br/>[ai-provider.ts]"]
+end
+
+subgraph group_integration["Local integration"]
+  node_bridge["Token-authenticated local bridge<br/>[server.mjs]"]
+  node_apptracker[("Markdown application tracker")]
+end
+
+node_seeker(("Job seeker"))
+node_ats{{"ATS portals"}}
+node_sheets[("Google Sheets")]
+node_telegram{{"Telegram digest and bot"}}
+node_ollama{{"Ollama"}}
+node_gemini{{"Gemini or Claude"}}
+
+node_seeker -->|"requests role scan"| node_scanner
+node_scanner -->|"queries job APIs"| node_ats
+node_scanner -->|"deduplicates results"| node_scanledger
+node_scanner -->|"pushes job rows"| node_sheets
+node_scanner -->|"sends digest"| node_telegram
+node_master -->|"provides profile facts"| node_profileexport
+node_seeker -->|"edits and tailors resume"| node_webui
+node_webui -->|"requests tailoring"| node_webapi
+node_webapi -.->|"stores resume data"| node_webstore
+node_webui -.->|"views outcomes"| node_analytics
+node_profileexport -->|"exports extension profile"| node_profiledata
+node_seeker -->|"visits application form"| node_atsform
+node_atsform -.->|"classifies form fields"| node_autofill
+node_profiledata -.->|"supplies answers"| node_autofill
+node_atsform -.->|"delegates memory requests"| node_graphservice
+node_graphservice -->|"loads and saves graph"| node_graphstorage
+node_atsform -->|"offers writing tools"| node_extensionai
+node_extensionai -->|"uses by default"| node_ollama
+node_extensionai -.->|"supports opt-in providers"| node_gemini
+node_atsform -->|"pushes tracked applications"| node_bridge
+node_bridge -->|"appends applications"| node_apptracker
+
+
+classDef toneNeutral fill:#f8fafc,stroke:#334155,stroke-width:1.5px,color:#0f172a
+classDef toneBlue fill:#dbeafe,stroke:#2563eb,stroke-width:1.5px,color:#172554
+classDef toneAmber fill:#fef3c7,stroke:#d97706,stroke-width:1.5px,color:#78350f
+classDef toneMint fill:#dcfce7,stroke:#16a34a,stroke-width:1.5px,color:#14532d
+classDef toneRose fill:#ffe4e6,stroke:#e11d48,stroke-width:1.5px,color:#881337
+classDef toneIndigo fill:#e0e7ff,stroke:#4f46e5,stroke-width:1.5px,color:#312e81
+classDef toneTeal fill:#ccfbf1,stroke:#0f766e,stroke-width:1.5px,color:#134e4a
+class node_scanner,node_scanledger toneBlue
+class node_master,node_profileexport,node_sheets toneAmber
+class node_webui,node_webapi,node_webstore,node_analytics toneMint
+class node_atsform,node_profiledata,node_autofill,node_graphservice,node_graphstorage,node_extensionai toneRose
+class node_bridge,node_apptracker,node_seeker,node_ats,node_telegram,node_ollama,node_gemini toneIndigo
+```
 
 ## How it fits together
 
