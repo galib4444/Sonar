@@ -1,8 +1,15 @@
 import { SignJWT, jwtVerify } from 'jose';
 import bcrypt from 'bcryptjs';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-const secret = new TextEncoder().encode(JWT_SECRET);
+// No fallback: a default secret in public source would let anyone forge tokens.
+// Read lazily so `next build` works without the env var set.
+function getSecret(): Uint8Array {
+  const value = process.env.JWT_SECRET;
+  if (!value || value.length < 32) {
+    throw new Error('JWT_SECRET must be set to at least 32 characters');
+  }
+  return new TextEncoder().encode(value);
+}
 
 export interface JWTPayload {
   id: string;
@@ -26,16 +33,12 @@ export async function generateToken(payload: JWTPayload): Promise<string> {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('7d')
-    .sign(secret);
+    .sign(getSecret());
 }
 
 export async function verifyToken(token: string): Promise<JWTPayload | null> {
   try {
-    console.log('🔐 [AUTH UTILS] Verifying token:', token.substring(0, 20) + '...');
-    console.log('🔐 [AUTH UTILS] JWT_SECRET:', JWT_SECRET.substring(0, 10) + '...');
-    
-    const { payload } = await jwtVerify(token, secret);
-    console.log('✅ [AUTH UTILS] Token verified successfully:', payload);
+    const { payload } = await jwtVerify(token, getSecret());
     return payload as JWTPayload;
   } catch (error) {
     console.error('❌ [AUTH UTILS] Token verification failed:', error);

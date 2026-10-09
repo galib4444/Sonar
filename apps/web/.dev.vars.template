@@ -13,8 +13,7 @@ MONGODB_URI=your_mongodb_connection_string_here
 # Optional: OpenRouter API Key (fallback AI API)
 OPENROUTER_API_KEY=your_openrouter_key_here
 
-# Optional: JWT Secret for authentication
-# Auto-generated if not set
+# Required: JWT secret for login (32+ characters). Generate with: openssl rand -base64 48
 JWT_SECRET=your_jwt_secret_here
 
 # Optional: Cloudflare Account ID (for deployment)

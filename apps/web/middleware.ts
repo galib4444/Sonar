@@ -56,11 +56,9 @@ export async function middleware(request: NextRequest) {
                   request.headers.get('authorization')?.replace('Bearer ', '');
     
     console.log(`🎫 [MIDDLEWARE] Token found: ${!!token}`);
-    console.log(`🍪 [MIDDLEWARE] All cookies: ${request.cookies.toString()}`);
     
     if (!token || !(await verifyToken(token))) {
       console.log(`❌ [MIDDLEWARE] No valid token, redirecting to login`);
-      console.log(`🔍 [MIDDLEWARE] Token verification failed for token: ${token?.substring(0, 20)}...`);
       if (isProtectedApi) {
         return NextResponse.json(
           { error: 'Unauthorized - Please login' },

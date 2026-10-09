@@ -428,7 +428,7 @@ CRITICAL FORMAT RULES:
 WHAT TO EXTRACT:
 - Only include entries that represent an actual employed position at a real employer/company.
 - Every entry MUST have a real date as startDate. Formats: "Month YYYY", "YYYY-MM", "YYYY".
-- Phone numbers (e.g. 203-430-9871) are NOT dates — skip any entry whose date looks like a phone number.
+- Phone numbers (e.g. 555-010-0187) are NOT dates — skip any entry whose date looks like a phone number.
 - description: combine ALL bullet points and achievements under that role into one string.
 
 WHAT TO SKIP:

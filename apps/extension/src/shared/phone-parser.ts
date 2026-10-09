@@ -6,7 +6,7 @@
 export interface ParsedPhoneNumber {
   countryCode: string;      // e.g., "+1", "+91", "+44"
   phoneNumber: string;       // e.g., "2432349871"
-  formattedPhone: string;    // e.g., "(243) 234-9871"
+  formattedPhone: string;    // e.g., "(555) 010-0142"
   fullNumber: string;        // e.g., "+12432349871"
 }
 
@@ -221,11 +221,11 @@ const COUNTRY_CODES: { [key: string]: { code: string; length: number } } = {
  * Parse a phone number into components
  * Handles various formats:
  * - +12432349871
- * - +1 (243) 234-9871
- * - +1-243-234-9871
+ * - +1 (555) 010-0142
+ * - +1-555-010-0142
  * - 12432349871
- * - (243) 234-9871 (assumes US/Canada)
- * - 243-234-9871 (assumes US/Canada)
+ * - (555) 010-0142 (assumes US/Canada)
+ * - 555-010-0142 (assumes US/Canada)
  */
 export function parsePhoneNumber(phoneInput: string): ParsedPhoneNumber {
   // Remove all non-numeric characters except leading +

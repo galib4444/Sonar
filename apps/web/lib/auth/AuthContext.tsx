@@ -40,7 +40,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       ?.split('=')[1];
       
     console.log('🍪 [AUTH CONTEXT] Cookie token found:', !!token);
-    console.log('🍪 [AUTH CONTEXT] All cookies:', document.cookie);
       
     if (!token) {
       console.log('❌ [AUTH CONTEXT] No token found, setting loading false');
@@ -99,7 +98,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const data = await response.json();
       console.log('✅ [AUTH CONTEXT] Login successful, data:', data);
-      console.log('🎫 [AUTH CONTEXT] Token:', data.token?.substring(0, 20) + '...');
       
       // Set token in cookie - remove secure flag for development
       const isProduction = process.env.NODE_ENV === 'production';
@@ -110,7 +108,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('🍪 [AUTH CONTEXT] Setting cookie with options:', cookieOptions);
       document.cookie = cookieOptions;
       console.log('🍪 [AUTH CONTEXT] Token saved to cookie');
-      console.log('🍪 [AUTH CONTEXT] All cookies after setting:', document.cookie);
       
       setUser(data.user);
       console.log('👤 [AUTH CONTEXT] User set:', data.user);
